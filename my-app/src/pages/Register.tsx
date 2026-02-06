@@ -22,12 +22,26 @@ const Register = () => {
       navigate('/login');
     } catch (err: any) {
       console.error("Registration error:", err);
-      const errorMessage = 
-        err.response?.data?.username?.[0] || 
-        err.response?.data?.email?.[0] || 
-        err.response?.data?.password?.[0] || 
-        err.response?.data?.detail || 
-        (typeof err.response?.data === 'string' ? err.response.data : 'Unknown error');
+      let errorMessage = 'Unknown error';
+      if (err.response?.data) {
+        if (typeof err.response.data === 'string') {
+          // Check if response is HTML (starts with <!doctype or <html)
+          if (err.response.data.trim().toLowerCase().startsWith('<!doctype') || err.response.data.trim().toLowerCase().startsWith('<html')) {
+             errorMessage = `Server Error (${err.response.status}). Please try again later.`;
+          } else {
+             errorMessage = err.response.data;
+          }
+        } else {
+             errorMessage = 
+                err.response.data.username?.[0] || 
+                err.response.data.email?.[0] || 
+                err.response.data.password?.[0] || 
+                err.response.data.detail || 
+                JSON.stringify(err.response.data);
+        }
+      } else if (err.message) {
+          errorMessage = err.message;
+      }
       
       toast.error('Registration failed: ' + errorMessage);
     }
