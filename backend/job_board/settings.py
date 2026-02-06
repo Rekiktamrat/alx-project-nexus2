@@ -164,17 +164,36 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8082",
 ]
 
+def ensure_https(url):
+    url = url.strip()
+    if not url:
+        return None
+    if not url.startswith('http://') and not url.startswith('https://'):
+        return f'https://{url}'
+    return url
+
 # Add environment variable origins
 env_cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
-if env_cors_origins:
-    CORS_ALLOWED_ORIGINS.extend([origin.strip() for origin in env_cors_origins if origin.strip()])
+for origin in env_cors_origins:
+    formatted = ensure_https(origin)
+    if formatted:
+        CORS_ALLOWED_ORIGINS.append(formatted)
 
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
-if not CSRF_TRUSTED_ORIGINS or CSRF_TRUSTED_ORIGINS == ['']:
-    CSRF_TRUSTED_ORIGINS = []
-    # Add CORS origins to CSRF trusted for good measure, though they are distinct
+CSRF_TRUSTED_ORIGINS = []
+env_csrf_origins = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+for origin in env_csrf_origins:
+    formatted = ensure_https(origin)
+    if formatted:
+        CSRF_TRUSTED_ORIGINS.append(formatted)
+
+# If CSRF_TRUSTED_ORIGINS is empty, default to CORS origins
+if not CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS = list(CORS_ALLOWED_ORIGINS)
+else:
+    # Ensure all CORS origins are also trusted for CSRF
     for origin in CORS_ALLOWED_ORIGINS:
-        CSRF_TRUSTED_ORIGINS.append(origin)
+        if origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(origin)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
