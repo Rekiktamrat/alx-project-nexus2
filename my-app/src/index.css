@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ProDev Job Board Design System */
+
+@layer base {
+  :root {
+    /* Clean, professional palette */
+    --background: 210 20% 98%;
+    --foreground: 220 20% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+
+    /* Professional teal primary */
+    --primary: 175 60% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Warm secondary */
+    --secondary: 35 90% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 15% 93%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 210 25% 95%;
+    --accent-foreground: 220 20% 10%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 175 60% 35%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens for job board */
+    --success: 160 60% 40%;
+    --success-foreground: 0 0% 100%;
+    
+    --entry-level: 210 70% 50%;
+    --mid-level: 35 80% 50%;
+    --senior-level: 280 60% 50%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(175 60% 35%) 0%, hsl(200 70% 40%) 100%);
+    --gradient-card-hover: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(175 20% 98%) 100%);
+
+    /* Shadows */
+    --shadow-card: 0 2px 8px -2px hsl(220 20% 10% / 0.08), 0 4px 16px -4px hsl(220 20% 10% / 0.08);
+    --shadow-card-hover: 0 8px 24px -8px hsl(175 60% 35% / 0.15), 0 4px 16px -4px hsl(220 20% 10% / 0.1);
+    --shadow-button: 0 2px 8px -2px hsl(175 60% 35% / 0.3);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 20% 8%;
+    --foreground: 210 20% 95%;
+
+    --card: 220 20% 12%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 220 20% 12%;
+    --popover-foreground: 210 20% 95%;
+
+    --primary: 175 55% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 35 80% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 15% 18%;
+    --muted-foreground: 210 15% 60%;
+
+    --accent: 220 15% 18%;
+    --accent-foreground: 210 20% 95%;
+
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 175 55% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-card-hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .shadow-button {
+    box-shadow: var(--shadow-button);
+  }
+
+  .badge-entry {
+    @apply bg-[hsl(var(--entry-level))] text-white;
+  }
+
+  .badge-mid {
+    @apply bg-[hsl(var(--mid-level))] text-white;
+  }
+
+  .badge-senior {
+    @apply bg-[hsl(var(--senior-level))] text-white;
+  }
+}
+
+/* Smooth transitions */
+@layer components {
+  .card-interactive {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-interactive:hover {
+    @apply shadow-card-hover -translate-y-1;
+  }
+
+  .filter-chip {
+    @apply px-4 py-2 rounded-full text-sm font-medium transition-all duration-200;
+    @apply bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground;
+  }
+
+  .filter-chip-active {
+    @apply bg-primary text-primary-foreground;
+  }
+}
