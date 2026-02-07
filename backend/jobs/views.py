@@ -1,11 +1,12 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Job, Category, Application
 from .serializers import JobSerializer, CategorySerializer, ApplicationSerializer
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from django.contrib.auth import get_user_model
+import traceback
 
 User = get_user_model()
 
@@ -24,11 +25,27 @@ class JobViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'company', 'location']
     ordering_fields = ['posted_at', 'salary_min']
 
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            print(f"Error creating job: {e}")
+            traceback.print_exc()
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     def perform_create(self, serializer):
-        if self.request.user.role != 'admin':
-             if not self.request.user.is_staff and self.request.user.role != 'admin':
-                 raise PermissionDenied("Only admins can post jobs.")
-        serializer.save(posted_by=self.request.user)
+        # Check permission
+        user = self.request.user
+        if not user.is_authenticated:
+             raise PermissionDenied("Authentication required.")
+             
+        # Check role safely
+        is_admin = getattr(user, 'role', '') == 'admin' or user.is_staff or user.is_superuser
+        
+        if not is_admin:
+             raise PermissionDenied("Only admins can post jobs.")
+             
+        serializer.save(posted_by=user)
 
     def perform_update(self, serializer):
         if self.request.user.role != 'admin' and serializer.instance.posted_by != self.request.user:
