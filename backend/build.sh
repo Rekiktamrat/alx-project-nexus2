@@ -8,3 +8,4 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 python create_superuser_script.py
 python seed_categories.py
+python repair_db.py

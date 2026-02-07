@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save } from 'lucide-react';
 import api from '../lib/api';
+import { toast } from 'sonner';
 
 interface Category {
   id: number;
@@ -59,11 +60,12 @@ export function PostJob() {
 
     try {
       await api.post('/jobs/', payload);
+      toast.success('Job posted successfully');
       navigate('/jobs');
     } catch (error: any) {
       console.error('Failed to post job', error);
       const msg = error.response?.data?.detail || JSON.stringify(error.response?.data) || 'Failed to post job. Please check your inputs.';
-      alert(msg);
+      toast.error(msg);
     } finally {
       setIsLoading(false);
     }
