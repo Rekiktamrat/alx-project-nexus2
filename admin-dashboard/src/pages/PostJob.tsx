@@ -48,12 +48,22 @@ export function PostJob() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    
+    // Clean up form data before sending
+    const payload = {
+      ...formData,
+      salary_min: formData.salary_min === '' ? null : Number(formData.salary_min),
+      salary_max: formData.salary_max === '' ? null : Number(formData.salary_max),
+      category_id: formData.category_id ? Number(formData.category_id) : null
+    };
+
     try {
-      await api.post('/jobs/', formData);
+      await api.post('/jobs/', payload);
       navigate('/jobs');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to post job', error);
-      alert('Failed to post job. Please check your inputs.');
+      const msg = error.response?.data?.detail || JSON.stringify(error.response?.data) || 'Failed to post job. Please check your inputs.';
+      alert(msg);
     } finally {
       setIsLoading(false);
     }
